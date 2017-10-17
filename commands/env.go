@@ -149,6 +149,10 @@ func shellCfgSet(c CommandLine, api libmachine.API) (*ShellConfig, error) {
 		shellCfg.Prefix = "(setenv \""
 		shellCfg.Suffix = "\")\n"
 		shellCfg.Delimiter = "\" \""
+	case "env":
+		shellCfg.Prefix = ""
+		shellCfg.Suffix = "\n"
+		shellCfg.Delimiter = "="
 	default:
 		shellCfg.Prefix = "export "
 		shellCfg.Suffix = "\"\n"
@@ -197,6 +201,10 @@ func shellCfgUnset(c CommandLine, api libmachine.API) (*ShellConfig, error) {
 		shellCfg.Prefix = "unsetenv "
 		shellCfg.Suffix = ";\n"
 		shellCfg.Delimiter = ""
+	case "env":
+		shellCfg.Prefix = "-u "
+		shellCfg.Suffix = ""
+		shellCfg.Delimiter = "\n"
 	default:
 		shellCfg.Prefix = "unset "
 		shellCfg.Suffix = "\n"
@@ -243,6 +251,10 @@ type UsageHintGenerator interface {
 type EnvUsageHintGenerator struct{}
 
 func (g *EnvUsageHintGenerator) GenerateUsageHint(userShell string, args []string) string {
+	if userShell == "env" {
+		return ""
+	}
+
 	cmd := ""
 	comment := "#"
 
